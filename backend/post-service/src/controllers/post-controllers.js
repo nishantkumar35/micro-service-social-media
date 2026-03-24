@@ -27,6 +27,7 @@ const createPost = async (req, res) => {
     const { content, mediaIds } = req.body;
     const newlyCreatedPost = new Post({
       user: req.user.userId,
+      username: req.headers["x-user-name"] || "Anonymous",
       content,
       mediaIds: mediaIds || [],
     });
@@ -36,7 +37,9 @@ const createPost = async (req, res) => {
     await publishEvent("post.created", {
       postId: newlyCreatedPost._id.toString(),
       userId: newlyCreatedPost.user.toString(),
+      username: newlyCreatedPost.username,
       content: newlyCreatedPost.content,
+      mediaIds: newlyCreatedPost.mediaIds,
       createdAt: newlyCreatedPost.createdAt,
     });
 

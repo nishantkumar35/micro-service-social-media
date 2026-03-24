@@ -83,6 +83,9 @@ app.use(
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
       proxyReqOpts.headers["Content-Type"] = "application/json";
       proxyReqOpts.headers["x-user-id"] = srcReq.user.userId || srcReq.user.id;
+      if (srcReq.user.username) {
+        proxyReqOpts.headers["x-user-name"] = srcReq.user.username;
+      }
       return proxyReqOpts;
     },
     userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
@@ -129,6 +132,9 @@ app.use(
     ...proxyOptions,
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
       proxyReqOpts.headers["x-user-id"] = srcReq.user.userId || srcReq.user.id;
+      if (srcReq.user.username) {
+        proxyReqOpts.headers["x-user-name"] = srcReq.user.username;
+      }
       proxyReqOpts.headers["Content-Type"] = "application/json";
       return proxyReqOpts;
     },

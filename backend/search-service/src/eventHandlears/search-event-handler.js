@@ -6,7 +6,9 @@ async function handlePostCreated(event, redisClient) {
     const newSearchPost = new Search({
       postId: event.postId,
       userId: event.userId,
+      username: event.username || "Anonymous",
       content: event.content,
+      mediaIds: event.mediaIds || [],
       createdAt: event.createdAt,
     });
 

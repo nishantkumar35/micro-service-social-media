@@ -44,6 +44,8 @@ const register = async (req, res) => {
         message: "User registered successfully",
         accessToken,
         refreshToken,
+        userId: newUser._id,
+        username: newUser.username,
       });
   } catch (err) {
     logger.error("Error during registration: %o", err);
@@ -90,6 +92,7 @@ const loginUser = async (req, res) => {
       accessToken,
       refreshToken,
       userId: user._id,
+      username: user.username,
     });
   } catch (e) {
     logger.error("Login error occured", e);

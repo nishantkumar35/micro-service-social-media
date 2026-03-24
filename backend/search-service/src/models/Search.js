@@ -12,10 +12,19 @@ const searchPostSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    username: {
+      type: String,
+      required: true,
+    },
     content: {
       type: String,
       required: true,
     },
+    mediaIds: [
+      {
+        type: String,
+      },
+    ],
     createdAt: {
       type: Date,
       required: true,

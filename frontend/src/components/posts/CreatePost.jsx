@@ -8,7 +8,7 @@ const CreatePost = () => {
   const [imageFiles, setImageFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const { createPost, uploadMedia } = usePosts();
   const { user } = useAuth();
 
@@ -16,8 +16,8 @@ const CreatePost = () => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
       setImageFiles((prev) => [...prev, ...files]);
-      
-      const previewPromises = files.map(file => {
+
+      const previewPromises = files.map((file) => {
         return new Promise((resolve) => {
           const reader = new FileReader();
           reader.onloadend = () => resolve(reader.result);
@@ -25,7 +25,7 @@ const CreatePost = () => {
         });
       });
 
-      Promise.all(previewPromises).then(newPreviews => {
+      Promise.all(previewPromises).then((newPreviews) => {
         setImagePreviews((prev) => [...prev, ...newPreviews]);
       });
     }
@@ -40,26 +40,26 @@ const CreatePost = () => {
     e.preventDefault();
     if (!content.trim() && imageFiles.length === 0) return;
 
-    console.log(`Starting upload of ${imageFiles.length} files...`);
-    const uploadPromises = imageFiles.map(async (file, i) => {
+    setIsSubmitting(true); // ← was missing
+
+    const mediaIds = [];
+
+    // ← replace Promise.all with sequential for loop
+    for (let i = 0; i < imageFiles.length; i++) {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", imageFiles[i]);
+
       const uploadResult = await uploadMedia(formData);
       if (uploadResult.success) {
-        const url = uploadResult.data.url || uploadResult.data.image || uploadResult.data.data?.url;
-        console.log(`File ${i+1} uploaded successfully:`, url);
-        return url;
+        const url =
+          uploadResult.data.url ||
+          uploadResult.data.image ||
+          uploadResult.data.data?.url;
+        mediaIds.push(url);
+        console.log(`File ${i + 1}/${imageFiles.length} uploaded:`, url);
+      } else {
+        console.error(`File ${i + 1} failed:`, uploadResult.message);
       }
-      console.error(`File ${i+1} upload failed:`, uploadResult.message);
-      return null;
-    });
-
-    const results = await Promise.all(uploadPromises);
-    const mediaIds = results.filter(url => url !== null);
-    console.log(`Total successful uploads: ${mediaIds.length}/${imageFiles.length}`);
-
-    if (imageFiles.length > 0 && mediaIds.length < imageFiles.length) {
-      alert(`Warning: Only ${mediaIds.length} out of ${imageFiles.length} images were uploaded successfully. Check your browser console for details.`);
     }
 
     const result = await createPost({
@@ -90,11 +90,14 @@ const CreatePost = () => {
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
-            
+
             {imagePreviews.length > 0 && (
               <div className="grid grid-cols-2 gap-2 mb-4">
                 {imagePreviews.map((preview, index) => (
-                  <div key={index} className="relative group aspect-square rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+                  <div
+                    key={index}
+                    className="relative group aspect-square rounded-xl overflow-hidden bg-gray-50 border border-gray-100"
+                  >
                     <img
                       src={preview}
                       alt={`Preview ${index}`}
@@ -127,7 +130,9 @@ const CreatePost = () => {
 
               <button
                 type="submit"
-                disabled={isSubmitting || (!content.trim() && imageFiles.length === 0)}
+                disabled={
+                  isSubmitting || (!content.trim() && imageFiles.length === 0)
+                }
                 className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-6 py-2 rounded-xl font-bold transition-all shadow-md shadow-indigo-200 flex items-center gap-2"
               >
                 {isSubmitting ? (

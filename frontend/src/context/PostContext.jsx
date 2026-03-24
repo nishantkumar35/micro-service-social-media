@@ -75,6 +75,11 @@ export const PostProvider = ({ children }) => {
       setPosts((prevPosts) => prevPosts.filter((post) => post._id !== id));
       return { success: true };
     } catch (err) {
+      if (err.response?.status === 404) {
+        // Post is already deleted in the backend
+        setPosts((prevPosts) => prevPosts.filter((post) => post._id !== id));
+        return { success: true };
+      }
       console.error("Failed to delete post:", err);
       return { success: false, message: "Failed to delete post." };
     }

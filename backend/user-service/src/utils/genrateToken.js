@@ -9,7 +9,7 @@ const genrateToken = async (user) => {
     username: user.username,
     email: user.email,
   };
-  const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "15m" });
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1day" });
 
   const refreshToken = crypto.randomBytes(40).toString("hex");
   const expiresAt = new Date();

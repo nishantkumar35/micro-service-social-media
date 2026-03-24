@@ -38,7 +38,6 @@ app.use('/api/posts',(req,res,next)=>{
     next();
 },router);
 
-app.use(errorHandler);
 
 async function startServer() {
   try {
@@ -53,6 +52,8 @@ async function startServer() {
 }
 
 startServer();
+
+app.use(errorHandler);
 
 process.on('unhandledRejection',(reason,promise)=>{
   logger.error("unhandled Reajection at ", promise, "reason:", reason);

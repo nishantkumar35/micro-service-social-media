@@ -13,7 +13,8 @@ const postSchema = new mongoose.Schema(
     },
     content: {
       type: String,
-      required: true,
+      required: false,
+      default: "",
     },
     mediaIds: [
       {
@@ -25,7 +26,7 @@ const postSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 postSchema.index({ content: "text" });

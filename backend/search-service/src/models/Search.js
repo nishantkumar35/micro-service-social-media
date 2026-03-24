@@ -18,7 +18,8 @@ const searchPostSchema = new mongoose.Schema(
     },
     content: {
       type: String,
-      required: true,
+      required: false,
+      default: "",
     },
     mediaIds: [
       {
@@ -30,11 +31,10 @@ const searchPostSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-searchPostSchema.index({ content: "text" });
-searchPostSchema.index({ createdAt: -1 });
+searchPostSchema.index({ content: "text" });  // leave as is
 
 const Search = mongoose.model("Search", searchPostSchema);
 module.exports = Search;

@@ -23,18 +23,33 @@ const searchPostController = async (req, res) => {
       return res.json(JSON.parse(cachedData));
     }
 
-    const results = await Search.find(
+    const textResults = await Search.find(
       { $text: { $search: query } },
       { score: { $meta: "textScore" } }
     )
       .sort({ score: { $meta: "textScore" } })
-      .limit(10);
+      .limit(10)
+      .lean();
 
-    await req.redisClient.setex(
-      cacheKey,
-      300,
-      JSON.stringify(results)
-    );
+    const regexResults = await Search.find({
+      username: { $regex: query, $options: "i" },
+    })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .lean();
+
+    // Merge results, removing duplicates, prioritizing textScore matches
+    const resultsMap = new Map();
+    textResults.forEach((doc) => resultsMap.set(doc._id.toString(), doc));
+    regexResults.forEach((doc) => {
+      if (!resultsMap.has(doc._id.toString())) {
+        resultsMap.set(doc._id.toString(), doc);
+      }
+    });
+
+    const results = Array.from(resultsMap.values()).slice(0, 10);
+
+    await req.redisClient.setex(cacheKey, 300, JSON.stringify(results));
 
     logger.info("Serving from DB and caching result");
 

@@ -16,8 +16,10 @@ const SearchPage = () => {
     setLoading(true);
     setError("");
     try {
+      // Remove colons from the query to prevent backend MongoDB $text search errors
+      const sanitizedQuery = query.replace(/:/g, " ");
       const response = await axiosInstance.get("/v1/search/posts", {
-        params: { query }
+        params: { query: sanitizedQuery }
       });
       const data = response.data;
       const rawResults = Array.isArray(data) ? data : (data.posts || data.data || []);

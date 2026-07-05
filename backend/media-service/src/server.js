@@ -28,6 +28,39 @@ app.use((req, res, next) => {
   next();
 });
 
+// ── Health Check ─────────────────────────────────────────────────────────────
+app.get("/api/health", async (req, res) => {
+  const health = {
+    status: "ok",
+    service: "media-service",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    dependencies: {
+      mongodb: "unknown",
+      rabbitmq: "unknown",
+    },
+  };
+  try {
+    const mongoose = require("mongoose");
+    health.dependencies.mongodb =
+      mongoose.connection.readyState === 1 ? "ok" : "error";
+  } catch (e) {
+    health.dependencies.mongodb = "error";
+  }
+  try {
+    const { getChannel } = require("./utils/rabbitmq");
+    health.dependencies.rabbitmq = getChannel() ? "ok" : "error";
+  } catch (e) {
+    health.dependencies.rabbitmq = "error";
+  }
+  if (Object.values(health.dependencies).includes("error")) {
+    health.status = "degraded";
+  }
+  const statusCode = health.status === "ok" ? 200 : 503;
+  res.status(statusCode).json(health);
+});
+// ─────────────────────────────────────────────────────────────────────────────
+
 //*** Homework - implement Ip based rate limiting for sensitive endpoints
 
 app.use("/api/media", mediaRoutes);

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { usePosts } from "../context/PostContext";
 import CreatePost from "../components/posts/CreatePost";
 import PostCard from "../components/posts/PostCard";
-import { Loader2 } from "lucide-react";
+import { Loader2, Newspaper } from "lucide-react";
 
 const HomePage = () => {
   const { posts, loading, error, fetchPosts } = usePosts();
@@ -12,35 +12,63 @@ const HomePage = () => {
   }, [fetchPosts]);
 
   return (
-    <div className="animate-in fade-in duration-500">
+    <div>
+      {/* Page header */}
+      <div className="flex items-center gap-3 mb-5">
+        <div
+          className="w-10 h-10 rounded-2xl flex items-center justify-center"
+          style={{
+            background: "linear-gradient(135deg,#8b5cf6,#ec4899)",
+            boxShadow: "0 4px 0px #6d28d9",
+          }}
+        >
+          <Newspaper size={18} className="text-white" />
+        </div>
+        <div>
+          <h1 className="text-xl font-black text-purple-900">Your Feed</h1>
+          <p className="text-xs font-semibold text-purple-400">What's happening today ✨</p>
+        </div>
+      </div>
+
+      {/* Create post */}
       <CreatePost />
-      
-      <div className="space-y-6">
+
+      {/* Posts list */}
+      <div>
         {loading && posts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mb-4" />
-            <p className="text-gray-500 font-medium">Loading your feed...</p>
+          <div className="flex flex-col items-center justify-center py-16">
+            <div
+              className="w-14 h-14 rounded-3xl flex items-center justify-center mb-4"
+              style={{
+                background: "linear-gradient(135deg,#8b5cf6,#c026d3)",
+                boxShadow: "0 5px 0px #6d28d9",
+              }}
+            >
+              <Loader2 size={24} className="text-white animate-spin" />
+            </div>
+            <p className="text-sm font-bold text-purple-400">Loading your feed…</p>
           </div>
         ) : error ? (
-          <div className="bg-red-50 text-red-600 p-4 rounded-2xl border border-red-100 text-center">
-            {error}
-            <button 
+          <div
+            className="clay-card clay-card-pink p-6 text-center"
+          >
+            <p className="text-sm font-bold text-pink-600 mb-3">{error}</p>
+            <button
               onClick={fetchPosts}
-              className="block mx-auto mt-2 font-bold hover:underline"
+              className="clay-btn clay-btn-primary px-5 py-2 text-sm"
             >
               Try again
             </button>
           </div>
         ) : posts.length === 0 ? (
-          <div className="bg-white p-12 rounded-2xl border border-gray-100 text-center">
-            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 2v4a2 2 0 002 2h4" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-1">No posts yet</h3>
-            <p className="text-gray-500">Be the first to share something with the community!</p>
+          <div
+            className="clay-card p-12 text-center"
+          >
+            <div className="text-5xl mb-4">🌱</div>
+            <h3 className="text-lg font-black text-purple-900 mb-1">Nothing here yet</h3>
+            <p className="text-sm font-semibold text-purple-400">
+              Be the first to post something amazing!
+            </p>
           </div>
         ) : (
           posts.map((post) => (

@@ -1,80 +1,107 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Search, PlusSquare, User, Settings } from "lucide-react";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { Home, Search, User, Sparkles } from "lucide-react";
 
-function cn(...inputs) {
-  return twMerge(clsx(inputs));
-}
+const NAV_ITEMS = [
+  { to: "/",       icon: Home,   label: "Home" },
+  { to: "/search", icon: Search, label: "Search" },
+  { to: "/profile", icon: User,  label: "Profile" },
+];
 
-const SidebarLink = ({ to, icon: Icon, label, active }) => (
+const AVATAR_COLORS = [
+  { bg: "linear-gradient(135deg,#8b5cf6,#c026d3)", shadow: "#6d28d9" },
+  { bg: "linear-gradient(135deg,#34d399,#059669)",  shadow: "#047857" },
+  { bg: "linear-gradient(135deg,#fb923c,#ea580c)",  shadow: "#c2410c" },
+  { bg: "linear-gradient(135deg,#60a5fa,#2563eb)",  shadow: "#1d4ed8" },
+  { bg: "linear-gradient(135deg,#f472b6,#db2777)",  shadow: "#be185d" },
+];
+
+const SidebarLink = ({ to, icon: Icon, label, active, onClose }) => (
   <li>
     <Link
       to={to}
-      className={cn(
-        "flex items-center p-3 text-gray-900 rounded-xl transition-all duration-200 group",
-        active 
-          ? "bg-indigo-50 text-indigo-700 scale-[1.02] shadow-sm" 
-          : "hover:bg-gray-50 text-gray-600"
-      )}
+      onClick={onClose}
+      className={`sidebar-link${active ? " active" : ""}`}
     >
-      <Icon className={cn(
-        "w-5 h-5 transition duration-75",
-        active ? "text-indigo-700" : "text-gray-500 group-hover:text-indigo-600"
-      )} />
-      <span className="ml-3 font-medium">{label}</span>
+      <div
+        className="w-9 h-9 rounded-2xl flex items-center justify-center flex-shrink-0"
+        style={
+          active
+            ? {
+                background: "linear-gradient(135deg,#8b5cf6,#c026d3)",
+                boxShadow: "0 3px 0px #6d28d9",
+              }
+            : { background: "rgba(139,92,246,0.1)" }
+        }
+      >
+        <Icon className={`w-4.5 h-4.5 ${active ? "text-white" : "text-purple-500"}`} size={18} />
+      </div>
+      <span>{label}</span>
     </Link>
   </li>
 );
 
-const Sidebar = ({ isOpen }) => {
+const Sidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
 
   return (
     <aside
-      className={cn(
-        "fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 sm:translate-x-0",
-        !isOpen && "-translate-x-full"
-      )}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: 40,
+        width: "240px",
+        height: "100vh",
+        paddingTop: "4.5rem",
+        transform: isOpen ? "translateX(0)" : undefined,
+        transition: "transform 0.3s cubic-bezier(.4,0,.2,1)",
+        background: "rgba(240,235,255,0.92)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderRight: "2px solid rgba(196,181,253,0.35)",
+      }}
+      className={!isOpen ? "max-sm:-translate-x-full sm:translate-x-0" : ""}
     >
-      <div className="h-full px-4 py-4 overflow-y-auto bg-white">
-        <ul className="space-y-2 font-medium">
-          <SidebarLink
-            to="/"
-            icon={Home}
-            label="Home"
-            active={location.pathname === "/"}
-          />
-          <SidebarLink
-            to="/search"
-            icon={Search}
-            label="Search"
-            active={location.pathname === "/search"}
-          />
-          <SidebarLink
-            to="/create"
-            icon={PlusSquare}
-            label="Create"
-            active={location.pathname === "/create"}
-          />
-          <SidebarLink
-            to="/profile"
-            icon={User}
-            label="Profile"
-            active={location.pathname === "/profile"}
-          />
-        </ul>
-        
-        <div className="mt-8 pt-8 border-t border-gray-100">
-          <ul className="space-y-2">
-            <SidebarLink
-              to="/settings"
-              icon={Settings}
-              label="Settings"
-              active={location.pathname === "/settings"}
-            />
+      <div className="h-full flex flex-col px-4 py-5 overflow-y-auto">
+        {/* Nav Links */}
+        <nav className="flex-1">
+          <p className="text-xs font-black text-purple-400 uppercase tracking-widest px-2 mb-3">
+            Navigation
+          </p>
+          <ul className="space-y-1">
+            {NAV_ITEMS.map(({ to, icon, label }) => (
+              <SidebarLink
+                key={to}
+                to={to}
+                icon={icon}
+                label={label}
+                active={location.pathname === to}
+                onClose={onClose}
+              />
+            ))}
           </ul>
+        </nav>
+
+        {/* Bottom decoration */}
+        <div
+          className="mt-6 rounded-3xl p-4 text-center"
+          style={{
+            background: "linear-gradient(135deg,rgba(139,92,246,0.12),rgba(236,72,153,0.10))",
+            border: "2px solid rgba(196,181,253,0.35)",
+          }}
+        >
+          <div
+            className="w-10 h-10 rounded-2xl flex items-center justify-center mx-auto mb-2"
+            style={{
+              background: "linear-gradient(135deg,#8b5cf6,#ec4899)",
+              boxShadow: "0 4px 0px #6d28d9",
+            }}
+          >
+            <Sparkles className="w-5 h-5 text-white" />
+          </div>
+          <p className="text-xs font-bold text-purple-800">MicroSocial</p>
+          <p className="text-xs text-purple-500 mt-0.5">Share your world 🌎</p>
         </div>
       </div>
     </aside>

@@ -21,6 +21,16 @@ const postSchema = new mongoose.Schema(
         type: String,
       },
     ],
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    likesCount: {
+      type: Number,
+      default: 0,
+    },
     createdAt: {
       type: Date,
       default: Date.now,
@@ -34,3 +44,4 @@ postSchema.index({ content: "text" });
 const Post = mongoose.model("Post", postSchema);
 
 module.exports = Post;
+

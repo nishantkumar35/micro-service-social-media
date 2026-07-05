@@ -10,6 +10,7 @@ const { RateLimiterRedis } = require("rate-limiter-flexible");
 const {rateLimit} = require('express-rate-limit');
 const {RedisStore} = require('rate-limit-redis');
 const router = require("./routes/user-routes");
+const followRouter = require("./routes/follow-routes");
 const errorHandler = require('./middelwares/errorHandler')
 
 
@@ -32,6 +33,40 @@ app.use((req, res, next) => {
   next();
 });
 
+// ── Health Check ─────────────────────────────────────────────────────────────
+app.get("/api/health", async (req, res) => {
+  const health = {
+    status: "ok",
+    service: "user-service",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    dependencies: {
+      mongodb: "unknown",
+      redis: "unknown",
+    },
+  };
+  try {
+    const mongoose = require("mongoose");
+    health.dependencies.mongodb =
+      mongoose.connection.readyState === 1 ? "ok" : "error";
+  } catch (e) {
+    health.dependencies.mongodb = "error";
+  }
+  try {
+    await redishClient.ping();
+    health.dependencies.redis = "ok";
+  } catch (e) {
+    health.dependencies.redis = "error";
+  }
+  if (Object.values(health.dependencies).includes("error")) {
+    health.status = "degraded";
+  }
+  const statusCode = health.status === "ok" ? 200 : 503;
+  res.status(statusCode).json(health);
+});
+// ─────────────────────────────────────────────────────────────────────────────
+
+
 // ddos pritection and rate limiting
 const rateLimiter = new RateLimiterRedis({
   storeClient: redishClient,
@@ -52,8 +87,8 @@ app.use((req, res, next) => {
 
 // ip based rate limiting for sensitive endpoints
 const sensitiveEndpointsLimiter = rateLimit({
-    windowMs : 15*60*1000,
-    max : 50,
+    windowMs : 5*60*1000,
+    max : 100,
     standardHeaders : true,
     legacyHeaders: false,
     handler: (req,res)=>{
@@ -72,6 +107,9 @@ app.use('/api/auth/register',sensitiveEndpointsLimiter);
 // routes
 
 app.use('/api/auth',router);
+
+// follow / unfollow routes
+app.use('/api/users', followRouter);
 
 // error handler
 app.use(errorHandler);

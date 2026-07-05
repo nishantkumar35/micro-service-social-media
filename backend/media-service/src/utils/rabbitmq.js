@@ -50,4 +50,9 @@ async function consumeEvent(routingKey, callback) {
   logger.info(`Subscribed to event: ${routingKey}`);
 }
 
-module.exports = { connectToRabbitMQ, publishEvent, consumeEvent };
+function getChannel() {
+  return channel;
+}
+
+module.exports = { connectToRabbitMQ, publishEvent, consumeEvent, getChannel };
+

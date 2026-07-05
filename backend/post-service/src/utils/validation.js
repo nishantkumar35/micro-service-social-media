@@ -9,4 +9,14 @@ const validateCreatePost = (data) => {
   return schema.validate(data);
 };
 
-module.exports = { validateCreatePost };
+const validateComment = (data) => {
+  const schema = Joi.object({
+    content: Joi.string().trim().min(1).max(500).required().messages({
+      "string.empty": "Comment content cannot be empty",
+      "string.max": "Comment cannot exceed 500 characters",
+    }),
+  });
+  return schema.validate(data);
+};
+
+module.exports = { validateCreatePost, validateComment };

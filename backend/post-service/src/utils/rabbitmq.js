@@ -32,4 +32,8 @@ async function publishEvent(routingKey, message) {
   logger.info(`Event published: ${routingKey}`);
 }
 
-module.exports = { connectToRabbitMQ, publishEvent };
+function getChannel() {
+  return channel;
+}
+
+module.exports = { connectToRabbitMQ, publishEvent, getChannel };

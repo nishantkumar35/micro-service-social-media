@@ -1,1 +1,214 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
+
+/* ── Claymorphism Design System ─────────────────────────────────────── */
+:root {
+  --clay-purple:   #a78bfa;
+  --clay-pink:     #f472b6;
+  --clay-teal:     #34d399;
+  --clay-orange:   #fb923c;
+  --clay-blue:     #60a5fa;
+  --clay-yellow:   #fbbf24;
+
+  --clay-bg:       #f0ebff;
+  --clay-surface:  #ffffff;
+
+  /* Clay shadow: offset bottom-right colored shadow gives the 3D "puffy" look */
+  --shadow-clay-sm:  3px 4px 0px 0px rgba(139, 92, 246, 0.25);
+  --shadow-clay-md:  5px 6px 0px 0px rgba(139, 92, 246, 0.22);
+  --shadow-clay-lg:  7px 8px 0px 0px rgba(139, 92, 246, 0.20);
+  --shadow-clay-purple: 5px 6px 0px 0px rgba(167, 139, 250, 0.45);
+  --shadow-clay-pink:   5px 6px 0px 0px rgba(244, 114, 182, 0.40);
+  --shadow-clay-teal:   5px 6px 0px 0px rgba(52, 211, 153, 0.40);
+  --shadow-clay-blue:   5px 6px 0px 0px rgba(96, 165, 250, 0.40);
+  --shadow-clay-orange: 5px 6px 0px 0px rgba(251, 146, 60, 0.40);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+  background-color: var(--clay-bg);
+  background-image:
+    radial-gradient(ellipse 600px 400px at 10% 20%, rgba(196, 181, 253, 0.35) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 350px at 85% 15%, rgba(167, 243, 208, 0.30) 0%, transparent 70%),
+    radial-gradient(ellipse 450px 300px at 60% 85%, rgba(253, 186, 116, 0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 300px at 5% 80%, rgba(196, 181, 253, 0.20) 0%, transparent 70%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: #1e1b4b;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #a78bfa; }
+
+/* ── Clay utility classes ──────────────────────────────────────────── */
+.clay-card {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: var(--shadow-clay-md);
+  border: 2px solid rgba(255,255,255,0.9);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.clay-card:hover {
+  box-shadow: var(--shadow-clay-lg);
+  transform: translateY(-1px);
+}
+
+.clay-card-purple  { box-shadow: var(--shadow-clay-purple); }
+.clay-card-pink    { box-shadow: var(--shadow-clay-pink); }
+.clay-card-teal    { box-shadow: var(--shadow-clay-teal); }
+.clay-card-blue    { box-shadow: var(--shadow-clay-blue); }
+.clay-card-orange  { box-shadow: var(--shadow-clay-orange); }
+
+.clay-btn {
+  border-radius: 16px;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  letter-spacing: 0.01em;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 2px solid rgba(0,0,0,0.06);
+  cursor: pointer;
+}
+
+.clay-btn:active {
+  transform: translateY(2px);
+}
+
+.clay-btn-primary {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 5px 0px #6d28d9, 0 8px 16px rgba(109,40,217,0.3);
+}
+
+.clay-btn-primary:hover {
+  box-shadow: 0 3px 0px #6d28d9, 0 6px 12px rgba(109,40,217,0.3);
+  transform: translateY(2px);
+}
+
+.clay-btn-primary:active {
+  box-shadow: 0 1px 0px #6d28d9;
+  transform: translateY(4px);
+}
+
+.clay-btn-danger {
+  background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+  color: #fff;
+  box-shadow: 0 5px 0px #db2777, 0 8px 16px rgba(219,39,119,0.25);
+}
+
+.clay-btn-danger:hover {
+  box-shadow: 0 3px 0px #db2777;
+  transform: translateY(2px);
+}
+
+.clay-btn-ghost {
+  background: rgba(139, 92, 246, 0.08);
+  color: #7c3aed;
+  box-shadow: none;
+  border: 2px solid rgba(139, 92, 246, 0.15);
+}
+
+.clay-btn-ghost:hover {
+  background: rgba(139, 92, 246, 0.14);
+  box-shadow: none;
+  transform: none;
+}
+
+.clay-input {
+  border-radius: 16px;
+  border: 2.5px solid #e9d5ff;
+  background: #faf5ff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  color: #1e1b4b;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.clay-input:focus {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.18);
+  background: #fff;
+}
+
+.clay-input::placeholder { color: #c4b5fd; font-weight: 500; }
+
+.clay-avatar {
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: var(--shadow-clay-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── Animations ────────────────────────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-clay {
+  0%, 100% { box-shadow: var(--shadow-clay-purple); }
+  50%       { box-shadow: 0 0 0 6px rgba(167,139,250,0.15), var(--shadow-clay-purple); }
+}
+
+@keyframes like-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.4); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.animate-fade-up   { animation: fadeSlideUp 0.4s ease both; }
+.animate-like-pop  { animation: like-pop 0.35s ease; }
+.animate-pulse-clay { animation: pulse-clay 2s ease infinite; }
+
+/* ── Sidebar ───────────────────────────────────────────────────────── */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  border: 2px solid transparent;
+}
+
+.sidebar-link:hover {
+  background: rgba(139, 92, 246, 0.08);
+  color: #7c3aed;
+  border-color: rgba(139, 92, 246, 0.12);
+  transform: translateX(3px);
+}
+
+.sidebar-link.active {
+  background: linear-gradient(135deg, #ede9fe, #f3e8ff);
+  color: #7c3aed;
+  border-color: rgba(139, 92, 246, 0.25);
+  box-shadow: var(--shadow-clay-purple);
+}
+
+.sidebar-link.active svg { color: #7c3aed; }

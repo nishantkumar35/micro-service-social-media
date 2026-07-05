@@ -19,9 +19,32 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// ── Health Check (before rate limiting so it's never blocked) ───────────────
+app.get("/health", async (req, res) => {
+  const health = {
+    status: "ok",
+    service: "api-gateway",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    dependencies: {
+      redis: "unknown",
+    },
+  };
+  try {
+    await redisClient.ping();
+    health.dependencies.redis = "ok";
+  } catch (e) {
+    health.dependencies.redis = "error";
+    health.status = "degraded";
+  }
+  const statusCode = health.status === "ok" ? 200 : 503;
+  res.status(statusCode).json(health);
+});
+// ────────────────────────────────────────────────────────────────────────────
+
 // rateLimiting
 const ratelimitOption = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 5 * 60 * 1000,
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
@@ -147,7 +170,31 @@ app.use(
   }),
 );
 
+// setting up proxy for users (follow/unfollow system)
+app.use(
+  "/v1/users",
+  validateToken,
+  proxy(process.env.USER_SERVICE, {
+    ...proxyOptions,
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+      proxyReqOpts.headers["Content-Type"] = "application/json";
+      proxyReqOpts.headers["x-user-id"] = srcReq.user.userId || srcReq.user.id;
+      if (srcReq.user.username) {
+        proxyReqOpts.headers["x-user-name"] = srcReq.user.username;
+      }
+      return proxyReqOpts;
+    },
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+      logger.info(
+        `Response received from user service (users): ${proxyRes.statusCode}`,
+      );
+      return proxyResData;
+    },
+  }),
+);
+
 app.use(errorHandler);
+
 
 const PORT = process.env.PORT || 3000;
 
